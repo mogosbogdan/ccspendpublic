@@ -18,14 +18,25 @@ export function allocatePaymentsToPurchases(
   const paid: Record<string, number> = {};
   for (const p of purchases) paid[p.id] = 0;
   for (const id of Object.keys(byMonth)) {
-    for (const amount of Object.values(byMonth[id])) {
-      paid[id] = round2((paid[id] ?? 0) + amount);
-    }
+    const total = Object.values(byMonth[id]).reduce((s, a) => s + a, 0);
+    paid[id] = round2(total);
   }
   return paid;
 }
 
-/** Allocate payments to purchases per month. Returns paidByPurchaseByMonth[purchaseId][month] = amount applied that month to that purchase. */
+/** True if this purchase has an installment due in this month (payment window: first payment month through last). */
+function hasInstallmentDueInMonth(p: Purchase, month: string): boolean {
+  if (p.installments <= 0) return false;
+  const first = firstPaymentMonth(p.date);
+  const [fy, fm] = first.split('-').map(Number);
+  const [my, mm] = month.split('-').map(Number);
+  const firstIdx = fy * 12 + fm;
+  const monthIdx = my * 12 + mm;
+  const lastIdx = firstIdx + p.installments - 1;
+  return monthIdx >= firstIdx && monthIdx <= lastIdx;
+}
+
+/** Allocate payments to purchases per month. Each purchase gets at most its monthlyPayment per month (when it has an installment due). Returns paidByPurchaseByMonth[purchaseId][month] = amount applied that month to that purchase. */
 export function allocatePaymentsToPurchasesByMonth(
   purchases: Purchase[],
   payments: PaymentsByMonth
@@ -44,13 +55,16 @@ export function allocatePaymentsToPurchasesByMonth(
 
     for (const p of purchasesByFirst) {
       if (remaining <= 0) break;
+      if (!hasInstallmentDueInMonth(p, month)) continue;
       const alreadyPaid = Object.values(paidByPurchaseByMonth[p.id] ?? {}).reduce((s, a) => s + a, 0);
-      const debt = round2(p.amount - alreadyPaid);
+      const debt = p.amount - alreadyPaid;
       if (debt <= 0) continue;
-      const apply = round2(Math.min(remaining, debt));
+      const cap = p.installments > 0 ? p.monthlyPayment : debt;
+      const apply = Math.min(remaining, debt, cap);
       if (apply > 0) {
-        paidByPurchaseByMonth[p.id][month] = round2((paidByPurchaseByMonth[p.id][month] ?? 0) + apply);
-        remaining = round2(remaining - apply);
+        const stored = (paidByPurchaseByMonth[p.id][month] ?? 0) + apply;
+        paidByPurchaseByMonth[p.id][month] = round2(stored);
+        remaining -= apply;
       }
     }
   }
