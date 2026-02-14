@@ -2,10 +2,29 @@ import type { Purchase, PaymentsByMonth } from './types';
 
 const base = '/api';
 
+async function getErrorFromResponse(
+  res: Response,
+  fallback: string
+): Promise<never> {
+  const parsed = await res
+    .json()
+    .catch((): { error?: string } => ({ error: res.statusText }));
+  throw new Error(parsed.error || fallback);
+}
+
+async function parseJsonOrThrow<T>(
+  res: Response,
+  fallback: string
+): Promise<T> {
+  if (!res.ok) {
+    return getErrorFromResponse(res, fallback);
+  }
+  return res.json() as Promise<T>;
+}
+
 export async function fetchPurchases(): Promise<Purchase[]> {
   const res = await fetch(`${base}/purchases`);
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  return parseJsonOrThrow<Purchase[]>(res, 'Failed to fetch purchases');
 }
 
 export async function addPurchase(params: {
@@ -18,17 +37,12 @@ export async function addPurchase(params: {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(params),
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error(err.error || 'Failed to add purchase');
-  }
-  return res.json();
+  return parseJsonOrThrow<Purchase>(res, 'Failed to add purchase');
 }
 
 export async function fetchPayments(): Promise<PaymentsByMonth> {
   const res = await fetch(`${base}/payments`);
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
+  return parseJsonOrThrow<PaymentsByMonth>(res, 'Failed to fetch payments');
 }
 
 export async function addPayment(month: string, amount: number): Promise<PaymentsByMonth> {
@@ -37,9 +51,5 @@ export async function addPayment(month: string, amount: number): Promise<Payment
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ month, amount }),
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error(err.error || 'Failed to add payment');
-  }
-  return res.json();
+  return parseJsonOrThrow<PaymentsByMonth>(res, 'Failed to add payment');
 }

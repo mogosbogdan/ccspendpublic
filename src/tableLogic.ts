@@ -8,6 +8,7 @@ import {
   purchaseMonth,
   addMonths,
   amountLeftForDisplay,
+  monthToIndex,
 } from './helpers';
 
 /** Allocate payments to purchases (oldest first by first payment month). Returns amount paid per purchase id (total). */
@@ -27,12 +28,14 @@ export function allocatePaymentsToPurchases(
 
 /** True if this purchase has an installment due in this month (payment window: first payment month through last). */
 function hasInstallmentDueInMonth(p: Purchase, month: string): boolean {
+  return monthInInstallmentWindow(p, month);
+}
+
+function monthInInstallmentWindow(p: Purchase, month: string): boolean {
   if (p.installments <= 0) return false;
   const first = firstPaymentMonth(p.date);
-  const [fy, fm] = first.split('-').map(Number);
-  const [my, mm] = month.split('-').map(Number);
-  const firstIdx = fy * 12 + fm;
-  const monthIdx = my * 12 + mm;
+  const firstIdx = monthToIndex(first);
+  const monthIdx = monthToIndex(month);
   const lastIdx = firstIdx + p.installments - 1;
   return monthIdx >= firstIdx && monthIdx <= lastIdx;
 }
@@ -76,14 +79,7 @@ export function allocatePaymentsToPurchasesByMonth(
 export function projectedForMonth(month: string, purchases: Purchase[]): number {
   let total = 0;
   for (const p of purchases) {
-    if (p.installments <= 0) continue;
-    const first = firstPaymentMonth(p.date);
-    const [fy, fm] = first.split('-').map(Number);
-    const [my, mm] = month.split('-').map(Number);
-    const firstIdx = fy * 12 + fm;
-    const monthIdx = my * 12 + mm;
-    const lastIdx = firstIdx + p.installments - 1;
-    if (monthIdx >= firstIdx && monthIdx <= lastIdx) {
+    if (monthInInstallmentWindow(p, month)) {
       total += p.monthlyPayment;
     }
   }

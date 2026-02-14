@@ -8,10 +8,13 @@ export function installmentNumber(amount: number): number {
   return 0;
 }
 
+export const LOCALE_RO = 'ro-RO';
+export const TABLE_COLUMN_COUNT = 9;
+
 export function monthsPassedSince(date: string | Date): number {
   const currentDate = new Date();
   const pastDate = new Date(date);
-  let months =
+  const months =
     (currentDate.getFullYear() - pastDate.getFullYear()) * 12 -
     pastDate.getMonth() +
     currentDate.getMonth();
@@ -55,6 +58,27 @@ export function toMonthKey(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
   return `${y}-${m}`;
+}
+
+/** Convert YYYY-MM to sortable month index. */
+export function monthToIndex(monthKey: string): number {
+  const [year, month] = monthKey.split('-').map(Number);
+  return year * 12 + month;
+}
+
+/** Format amount in RON using Romanian locale. */
+export function formatRon(amount: number): string {
+  return amount.toLocaleString(LOCALE_RO);
+}
+
+/** Default payment date input value: first day of current month (YYYY-MM-01). */
+export function defaultPaymentDateValue(): string {
+  return `${toMonthKey(new Date())}-01`;
+}
+
+/** Shared unknown-error to message mapping. */
+export function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
 }
 
 /** Purchase month as YYYY-MM from date string (YYYY-MM-DD) */

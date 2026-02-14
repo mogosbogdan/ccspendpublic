@@ -6,14 +6,19 @@ import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dataDir = join(__dirname, 'data');
-const dbPath = join(dataDir, 'db.json');
-const paymentsPath = join(dataDir, 'payments.json');
-
-const PORT = 3001;
+const CONFIG = {
+  port: 3001,
+  dataDir: join(__dirname, 'data'),
+  dbPath: join(__dirname, 'data', 'db.json'),
+  paymentsPath: join(__dirname, 'data', 'payments.json'),
+};
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+function round2(value) {
+  return Math.round(value * 100) / 100;
+}
 
 function installmentNumber(amount) {
   if (amount > 100 && amount <= 300) return 3;
@@ -26,13 +31,13 @@ function installmentNumber(amount) {
 }
 
 async function ensureDataDir() {
-  await mkdir(dataDir, { recursive: true });
+  await mkdir(CONFIG.dataDir, { recursive: true });
 }
 
 async function readPurchases() {
   await ensureDataDir();
   try {
-    const raw = await readFile(dbPath, 'utf-8');
+    const raw = await readFile(CONFIG.dbPath, 'utf-8');
     const data = JSON.parse(raw);
     return Array.isArray(data) ? data : (data.purchases ?? []);
   } catch {
@@ -42,13 +47,13 @@ async function readPurchases() {
 
 async function writePurchases(purchases) {
   await ensureDataDir();
-  await writeFile(dbPath, JSON.stringify(purchases, null, 2), 'utf-8');
+  await writeFile(CONFIG.dbPath, JSON.stringify(purchases, null, 2), 'utf-8');
 }
 
 async function readPayments() {
   await ensureDataDir();
   try {
-    const raw = await readFile(paymentsPath, 'utf-8');
+    const raw = await readFile(CONFIG.paymentsPath, 'utf-8');
     const data = JSON.parse(raw);
     return data && typeof data === 'object' ? data : {};
   } catch {
@@ -58,7 +63,11 @@ async function readPayments() {
 
 async function writePayments(payments) {
   await ensureDataDir();
-  await writeFile(paymentsPath, JSON.stringify(payments, null, 2), 'utf-8');
+  await writeFile(CONFIG.paymentsPath, JSON.stringify(payments, null, 2), 'utf-8');
+}
+
+function sendServerError(res, error) {
+  res.status(500).json({ error: String(error.message) });
 }
 
 app.get('/api/purchases', async (_req, res) => {
@@ -66,7 +75,7 @@ app.get('/api/purchases', async (_req, res) => {
     const purchases = await readPurchases();
     res.json(purchases);
   } catch (e) {
-    res.status(500).json({ error: String(e.message) });
+    sendServerError(res, e);
   }
 });
 
@@ -79,7 +88,7 @@ app.post('/api/purchases', async (req, res) => {
       return res.status(400).json({ error: 'name and positive amount required' });
     }
     const installments = installmentNumber(numAmount);
-    const monthlyPayment = installments > 0 ? Math.round((numAmount / installments) * 100) / 100 : 0;
+    const monthlyPayment = installments > 0 ? round2(numAmount / installments) : 0;
     const purchase = {
       id: randomUUID(),
       name: String(name).trim(),
@@ -93,7 +102,7 @@ app.post('/api/purchases', async (req, res) => {
     await writePurchases(purchases);
     res.status(201).json(purchase);
   } catch (e) {
-    res.status(500).json({ error: String(e.message) });
+    sendServerError(res, e);
   }
 });
 
@@ -102,7 +111,7 @@ app.get('/api/payments', async (_req, res) => {
     const payments = await readPayments();
     res.json(payments);
   } catch (e) {
-    res.status(500).json({ error: String(e.message) });
+    sendServerError(res, e);
   }
 });
 
@@ -115,11 +124,11 @@ app.post('/api/payments', async (req, res) => {
     }
     const payments = await readPayments();
     const existing = Number(payments[month]) || 0;
-    payments[month] = Math.round((existing + numAmount) * 100) / 100;
+    payments[month] = round2(existing + numAmount);
     await writePayments(payments);
     res.json(payments);
   } catch (e) {
-    res.status(500).json({ error: String(e.message) });
+    sendServerError(res, e);
   }
 });
 
@@ -131,14 +140,14 @@ app.put('/api/payments/:month', async (req, res) => {
       return res.status(400).json({ error: 'month and amount required' });
     }
     const payments = await readPayments();
-    payments[month] = Math.round(Math.max(0, amount) * 100) / 100;
+    payments[month] = round2(Math.max(0, amount));
     await writePayments(payments);
     res.json(payments);
   } catch (e) {
-    res.status(500).json({ error: String(e.message) });
+    sendServerError(res, e);
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+app.listen(CONFIG.port, () => {
+  console.log(`Server running at http://localhost:${CONFIG.port}`);
 });
