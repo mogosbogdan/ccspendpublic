@@ -197,25 +197,30 @@ function App() {
                   <td colSpan={9}>No purchases yet. Add a purchase above.</td>
                 </tr>
               ) : (
-                rows.map((row, i) => {
-                  const isFirstRowInMonth = i === 0 || rows[i - 1].rowMonth !== row.rowMonth;
-                  return (
-                    <tr key={`${row.purchaseId}-${row.rowMonth}-${i}`}>
-                      <td>{row.isFirstRow ? row.purchaseName : ''}</td>
-                      <td className="num">{row.isFirstRow ? row.amount.toLocaleString('ro-RO') : ''}</td>
-                      <td>{isFirstRowInMonth ? row.monthYear : ''}</td>
-                      <td className="num">{(() => {
-                        const totalPaidThisMonth = payments[row.rowMonth] ?? 0;
-                        return isFirstRowInMonth && totalPaidThisMonth > 0 ? totalPaidThisMonth.toLocaleString('ro-RO') : '';
-                      })()}</td>
-                      <td className="num">{isFirstRowInMonth ? row.projectedMonthlyPayment.toLocaleString('ro-RO') : ''}</td>
-                      <td className="num">{row.isFirstRow ? row.installments : ''}</td>
-                      <td className="num">{row.isFirstRow ? row.amountLeft.toLocaleString('ro-RO') : ''}</td>
-                      <td className="num">{row.isFirstRow ? row.monthsPassed : ''}</td>
-                      <td className="num">{row.isFirstRow ? row.monthsLeft : ''}</td>
-                    </tr>
+                (() => {
+                  const visibleRows = rows.filter(
+                    (row, i) => row.isFirstRow || i === 0 || rows[i - 1].rowMonth !== row.rowMonth
                   );
-                })
+                  return visibleRows.map((row, j) => {
+                    const isFirstRowInMonth = j === 0 || visibleRows[j - 1].rowMonth !== row.rowMonth;
+                    return (
+                      <tr key={`${row.purchaseId}-${row.rowMonth}-${j}`}>
+                        <td>{row.isFirstRow ? row.purchaseName : ''}</td>
+                        <td className="num">{row.isFirstRow ? row.amount.toLocaleString('ro-RO') : ''}</td>
+                        <td>{isFirstRowInMonth ? row.monthYear : ''}</td>
+                        <td className="num">{(() => {
+                          const totalPaidThisMonth = payments[row.rowMonth] ?? 0;
+                          return isFirstRowInMonth && totalPaidThisMonth > 0 ? totalPaidThisMonth.toLocaleString('ro-RO') : '';
+                        })()}</td>
+                        <td className="num">{isFirstRowInMonth ? row.projectedMonthlyPayment.toLocaleString('ro-RO') : ''}</td>
+                        <td className="num">{row.isFirstRow ? row.installments : ''}</td>
+                        <td className="num">{row.isFirstRow ? row.amountLeft.toLocaleString('ro-RO') : ''}</td>
+                        <td className="num">{row.isFirstRow ? row.monthsPassed : ''}</td>
+                        <td className="num">{row.isFirstRow ? row.monthsLeft : ''}</td>
+                      </tr>
+                    );
+                  });
+                })()
               )}
             </tbody>
           </table>
