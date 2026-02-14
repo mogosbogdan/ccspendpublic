@@ -22,6 +22,15 @@ export function lessThanZero(param: number): number {
   return param <= 0 ? 0 : param;
 }
 
+/** Treat tiny remainders from old rounding as paid off. Below this, amount left is shown as 0. */
+const PAID_OFF_EPSILON = 0.05;
+
+/** Amount left to display: rounds to 0 when below PAID_OFF_EPSILON (e.g. 0.03 from old 2-decimal rounding). */
+export function amountLeftForDisplay(amountLeft: number): number {
+  if (amountLeft <= 0) return 0;
+  return amountLeft < PAID_OFF_EPSILON ? 0 : amountLeft;
+}
+
 /** First payment month = month after purchase. Returns YYYY-MM */
 export function firstPaymentMonth(purchaseDate: string): string {
   const d = new Date(purchaseDate + 'T12:00:00');

@@ -7,6 +7,7 @@ import {
   round2,
   purchaseMonth,
   addMonths,
+  amountLeftForDisplay,
 } from './helpers';
 
 /** Allocate payments to purchases (oldest first by first payment month). Returns amount paid per purchase id (total). */
@@ -105,7 +106,7 @@ export function buildTableRows(
 
   for (const p of purchases) {
     const paid = amountPaidByPurchase[p.id] ?? 0;
-    const amountLeft = lessThanZero(round2(p.amount - paid));
+    const amountLeft = amountLeftForDisplay(lessThanZero(round2(p.amount - paid)));
     const monthsPassed = monthsPassedSince(p.date);
     const firstPay = firstPaymentMonth(p.date);
     const firstDate = new Date(firstPay + '-01T12:00:00');
@@ -178,7 +179,7 @@ export function totalRemainingDebt(
   const paid = allocatePaymentsToPurchases(purchases, payments);
   let total = 0;
   for (const p of purchases) {
-    total += lessThanZero(round2(p.amount - (paid[p.id] ?? 0)));
+    total += amountLeftForDisplay(lessThanZero(round2(p.amount - (paid[p.id] ?? 0))));
   }
   return round2(total);
 }
