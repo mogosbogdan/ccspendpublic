@@ -1,0 +1,114 @@
+[
+  {
+    "id": "cf8f641b-674a-4320-9517-a9de50c7ed0a",
+    "name": "Dell Monitor 1",
+    "amount": 3119.9,
+    "date": "2023-03-02",
+    "installments": 24,
+    "monthlyPayment": 130
+  },
+  {
+    "id": "82c018f1-4b9c-4e55-ae61-b76ea98afa3f",
+    "name": "Buc - Mun Flight",
+    "amount": 630.96,
+    "date": "2023-05-02",
+    "installments": 9,
+    "monthlyPayment": 70.11
+  },
+  {
+    "id": "57dc0950-34f0-4564-a2d7-942a1135f2d7",
+    "name": "Mun - Bru Flight",
+    "amount": 478.59,
+    "date": "2023-05-02",
+    "installments": 6,
+    "monthlyPayment": 79.77
+  },
+  {
+    "id": "75465eae-af24-44d0-b0e9-7a8308ab7976",
+    "name": "Bru - Buc Flight",
+    "amount": 894,
+    "date": "2023-05-02",
+    "installments": 9,
+    "monthlyPayment": 99.33
+  },
+  {
+    "id": "d3dc373b-0b3a-4020-8bf6-8ae22fae042e",
+    "name": "Dell Monitor 2",
+    "amount": 2356.15,
+    "date": "2023-11-23",
+    "installments": 18,
+    "monthlyPayment": 130.9
+  },
+  {
+    "id": "cc7db56a-db23-4c33-aaf9-75beb21516a8",
+    "name": "OTP - INC Flight",
+    "amount": 3824.85,
+    "date": "2023-12-23",
+    "installments": 24,
+    "monthlyPayment": 159.37
+  },
+  {
+    "id": "f01cdcbb-0480-44e5-865d-24281cec394c",
+    "name": "INC - TYO",
+    "amount": 733.85,
+    "date": "2023-12-23",
+    "installments": 9,
+    "monthlyPayment": 81.54
+  },
+  {
+    "id": "8ef1efc8-fbc3-47d3-9b12-e770f998b967",
+    "name": "KIX - INC",
+    "amount": 802.6,
+    "date": "2023-12-23",
+    "installments": 9,
+    "monthlyPayment": 89.18
+  },
+  {
+    "id": "6d63f868-f98c-4836-ab3c-ac2baac887d1",
+    "name": "Iphone 15 VDF",
+    "amount": 2735.55,
+    "date": "2024-02-05",
+    "installments": 24,
+    "monthlyPayment": 113.98
+  },
+  {
+    "id": "17088a71-675a-45a0-b952-19b834134695",
+    "name": "Mac Studio",
+    "amount": 8234.53,
+    "date": "2024-05-01",
+    "installments": 24,
+    "monthlyPayment": 343.11
+  },
+  {
+    "id": "940716b1-9fef-4764-98c0-e05a868152eb",
+    "name": "Jordan 5 Fire Red",
+    "amount": 1073.16,
+    "date": "2025-09-15",
+    "installments": 9,
+    "monthlyPayment": 119.24
+  },
+  {
+    "id": "746bb638-e287-4e96-b19b-749f10194a94",
+    "name": "Jordan 1 Low Chicago",
+    "amount": 819.58,
+    "date": "2025-11-15",
+    "installments": 9,
+    "monthlyPayment": 91.06
+  },
+  {
+    "id": "aecceff5-794e-4777-8cfe-5b10b5e54b8f",
+    "name": "Lentile Ochelari",
+    "amount": 2037.09,
+    "date": "2026-02-08",
+    "installments": 18,
+    "monthlyPayment": 113.17
+  },
+  {
+    "id": "86f9d9c0-b900-43a9-a98a-2fce45e89a27",
+    "name": "Jordan 6 Reverse Infrared",
+    "amount": 1077.7,
+    "date": "2026-02-14",
+    "installments": 9,
+    "monthlyPayment": 119.74
+  }
+]
