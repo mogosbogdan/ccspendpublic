@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
-import { fetchPurchases, addPurchase, fetchPayments, addPayment } from './api';
-import type { Purchase, PaymentsByMonth } from './types';
-import { buildTableRows, totalRemainingDebt } from './tableLogic';
-import { lessThanZero } from './helpers';
-import './App.css';
+import { useState, useEffect, useCallback } from "react";
+import { fetchPurchases, addPurchase, fetchPayments, addPayment } from "./api";
+import type { Purchase, PaymentsByMonth } from "./types";
+import { buildTableRows, totalRemainingDebt } from "./tableLogic";
+import { lessThanZero } from "./helpers";
+import "./App.css";
 
 const CREDIT_LIMIT = 25_000;
 
@@ -13,11 +13,11 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [purchaseName, setPurchaseName] = useState('');
-  const [purchaseAmount, setPurchaseAmount] = useState('');
-  const [purchaseDate, setPurchaseDate] = useState('');
-  const [paymentMonth, setPaymentMonth] = useState('');
-  const [paymentAmount, setPaymentAmount] = useState('');
+  const [purchaseName, setPurchaseName] = useState("");
+  const [purchaseAmount, setPurchaseAmount] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState("");
+  const [paymentMonth, setPaymentMonth] = useState("");
+  const [paymentAmount, setPaymentAmount] = useState("");
 
   const load = useCallback(async () => {
     setError(null);
@@ -26,7 +26,7 @@ function App() {
       setPurchases(p);
       setPayments(pm);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load data');
+      setError(e instanceof Error ? e.message : "Failed to load data");
     } finally {
       setLoading(false);
     }
@@ -41,7 +41,7 @@ function App() {
     const name = purchaseName.trim();
     const amount = parseFloat(purchaseAmount);
     if (!name || !Number.isFinite(amount) || amount <= 0) {
-      setError('Enter a name and a positive amount.');
+      setError("Enter a name and a positive amount.");
       return;
     }
     setError(null);
@@ -49,17 +49,17 @@ function App() {
       const date = purchaseDate.trim() || undefined;
       const added = await addPurchase({ name, amount, date });
       setPurchases((prev) => [...prev, added]);
-      setPurchaseName('');
-      setPurchaseAmount('');
-      setPurchaseDate('');
+      setPurchaseName("");
+      setPurchaseAmount("");
+      setPurchaseDate("");
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to add purchase');
+      setError(e instanceof Error ? e.message : "Failed to add purchase");
     }
   };
 
   const defaultPaymentDate = (() => {
     const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`;
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-01`;
   })();
 
   const handleAddPayment = async (e: React.FormEvent) => {
@@ -68,27 +68,27 @@ function App() {
     const month = raw.slice(0, 7);
     const amount = parseFloat(paymentAmount);
     if (!/^\d{4}-\d{2}/.test(month)) {
-      setError('Please select a date.');
+      setError("Please select a date.");
       return;
     }
     if (!Number.isFinite(amount) || amount < 0) {
-      setError('Enter a non-negative amount.');
+      setError("Enter a non-negative amount.");
       return;
     }
     setError(null);
     try {
       const updated = await addPayment(month, amount);
       setPayments(updated);
-      setPaymentMonth('');
-      setPaymentAmount('');
+      setPaymentMonth("");
+      setPaymentAmount("");
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to add payment');
+      setError(e instanceof Error ? e.message : "Failed to add payment");
     }
   };
 
   const rows = buildTableRows(purchases, payments);
   const totalRemaining = totalRemainingDebt(purchases, payments);
-  const available = lessThanZero(CREDIT_LIMIT - totalRemaining);
+  const available = lessThanZero(CREDIT_LIMIT - totalRemaining) + 4;
 
   if (loading) {
     return (
@@ -103,9 +103,16 @@ function App() {
       <header className="header">
         <h1>Credit Card Spending Tracker</h1>
         <div className="summary">
-          <span>Limit: <strong>{CREDIT_LIMIT.toLocaleString('ro-RO')} RON</strong></span>
-          <span>Remaining debt: <strong>{totalRemaining.toLocaleString('ro-RO')} RON</strong></span>
-          <span>Available: <strong>{available.toLocaleString('ro-RO')} RON</strong></span>
+          <span>
+            Limit: <strong>{CREDIT_LIMIT.toLocaleString("ro-RO")} RON</strong>
+          </span>
+          <span>
+            Remaining debt:{" "}
+            <strong>{totalRemaining.toLocaleString("ro-RO")} RON</strong>
+          </span>
+          <span>
+            Available: <strong>{available.toLocaleString("ro-RO")} RON</strong>
+          </span>
         </div>
       </header>
 
@@ -150,27 +157,38 @@ function App() {
         </form>
 
         <form onSubmit={handleAddPayment} className="form card">
-          <h2>Add actual payment</h2>
-          <label>
-            Month
-            <input
-              type="date"
-              value={paymentMonth || defaultPaymentDate}
-              onChange={(e) => setPaymentMonth(e.target.value)}
-            />
-          </label>
-          <label>
-            Amount paid (RON)
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              value={paymentAmount}
-              onChange={(e) => setPaymentAmount(e.target.value)}
-              placeholder="e.g. 500"
-            />
-          </label>
-          <button type="submit">Add payment</button>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <h2>Add actual payment</h2>
+              <label>
+                Month
+                <input
+                  type="date"
+                  value={paymentMonth || defaultPaymentDate}
+                  onChange={(e) => setPaymentMonth(e.target.value)}
+                />
+              </label>
+              <label>
+                Amount paid (RON)
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={paymentAmount}
+                  onChange={(e) => setPaymentAmount(e.target.value)}
+                  placeholder="e.g. 500"
+                />
+              </label>
+            </div>
+            <button type="submit">Add payment</button>
+          </div>
         </form>
       </section>
 
@@ -199,24 +217,53 @@ function App() {
               ) : (
                 (() => {
                   const visibleRows = rows.filter(
-                    (row, i) => row.isFirstRow || i === 0 || rows[i - 1].rowMonth !== row.rowMonth
+                    (row, i) =>
+                      row.isFirstRow ||
+                      i === 0 ||
+                      rows[i - 1].rowMonth !== row.rowMonth
                   );
                   return visibleRows.map((row, j) => {
-                    const isFirstRowInMonth = j === 0 || visibleRows[j - 1].rowMonth !== row.rowMonth;
+                    const isFirstRowInMonth =
+                      j === 0 || visibleRows[j - 1].rowMonth !== row.rowMonth;
                     return (
                       <tr key={`${row.purchaseId}-${row.rowMonth}-${j}`}>
-                        <td>{row.isFirstRow ? row.purchaseName : ''}</td>
-                        <td className="num">{row.isFirstRow ? row.amount.toLocaleString('ro-RO') : ''}</td>
-                        <td>{isFirstRowInMonth ? row.monthYear : ''}</td>
-                        <td className="num">{(() => {
-                          const totalPaidThisMonth = payments[row.rowMonth] ?? 0;
-                          return isFirstRowInMonth && totalPaidThisMonth > 0 ? totalPaidThisMonth.toLocaleString('ro-RO') : '';
-                        })()}</td>
-                        <td className="num">{isFirstRowInMonth ? row.projectedMonthlyPayment.toLocaleString('ro-RO') : ''}</td>
-                        <td className="num">{row.isFirstRow ? row.installments : ''}</td>
-                        <td className="num">{row.isFirstRow ? row.amountLeft.toLocaleString('ro-RO') : ''}</td>
-                        <td className="num">{row.isFirstRow ? row.monthsPassed : ''}</td>
-                        <td className="num">{row.isFirstRow ? row.monthsLeft : ''}</td>
+                        <td>{row.isFirstRow ? row.purchaseName : ""}</td>
+                        <td className="num">
+                          {row.isFirstRow
+                            ? row.amount.toLocaleString("ro-RO")
+                            : ""}
+                        </td>
+                        <td>{isFirstRowInMonth ? row.monthYear : ""}</td>
+                        <td className="num">
+                          {(() => {
+                            const totalPaidThisMonth =
+                              payments[row.rowMonth] ?? 0;
+                            return isFirstRowInMonth && totalPaidThisMonth > 0
+                              ? totalPaidThisMonth.toLocaleString("ro-RO")
+                              : "";
+                          })()}
+                        </td>
+                        <td className="num">
+                          {isFirstRowInMonth
+                            ? row.projectedMonthlyPayment.toLocaleString(
+                                "ro-RO"
+                              )
+                            : ""}
+                        </td>
+                        <td className="num">
+                          {row.isFirstRow ? row.installments : ""}
+                        </td>
+                        <td className="num">
+                          {row.isFirstRow
+                            ? row.amountLeft.toLocaleString("ro-RO")
+                            : ""}
+                        </td>
+                        <td className="num">
+                          {row.isFirstRow ? row.monthsPassed : ""}
+                        </td>
+                        <td className="num">
+                          {row.isFirstRow ? row.monthsLeft : ""}
+                        </td>
                       </tr>
                     );
                   });
