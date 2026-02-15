@@ -23,6 +23,8 @@ export interface TableRow {
   projectedMonthlyPayment: number;
   /** Shown only on first row */
   installments: number;
+  /** Monthly payment amount (shown only on first row) */
+  monthlyPayment: number;
   /** Shown only on first row */
   amountLeft: number;
   /** Shown only on first row */

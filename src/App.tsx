@@ -203,6 +203,7 @@ function App() {
                 <th>Month and year</th>
                 <th>Amount paid (RON)</th>
                 <th>Projected monthly (RON)</th>
+                <th>Monthly payment Per Purchase (RON)</th>
                 <th>Installments</th>
                 <th>Amount left (RON)</th>
                 <th>Months passed</th>
@@ -220,7 +221,7 @@ function App() {
                     (row, i) =>
                       row.isFirstRow ||
                       i === 0 ||
-                      rows[i - 1].rowMonth !== row.rowMonth
+                      rows[i - 1].rowMonth !== row.rowMonth,
                   );
                   return visibleRows.map((row, j) => {
                     const isFirstRowInMonth =
@@ -246,8 +247,13 @@ function App() {
                         <td className="num">
                           {isFirstRowInMonth
                             ? row.projectedMonthlyPayment.toLocaleString(
-                                "ro-RO"
+                                "ro-RO",
                               )
+                            : ""}
+                        </td>
+                        <td className="num">
+                          {row.isFirstRow
+                            ? row.monthlyPayment.toLocaleString("ro-RO")
                             : ""}
                         </td>
                         <td className="num">
