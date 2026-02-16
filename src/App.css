@@ -1,0 +1,142 @@
+.app {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.75rem;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.summary strong {
+  font-weight: 600;
+}
+
+.error {
+  background: rgba(220, 53, 69, 0.15);
+  border: 1px solid rgba(220, 53, 69, 0.5);
+  color: #c92a2a;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.forms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form.card {
+  padding: 1.25rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.form.card h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+}
+
+.form label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.form input {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.form button {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+}
+
+.table-section h2 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.2rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.main-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.main-table th,
+.main-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.main-table th {
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.06);
+  white-space: nowrap;
+}
+
+.main-table tr:last-child td {
+  border-bottom: none;
+}
+
+.main-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-color-scheme: light) {
+  .form.card {
+    border-color: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  .form input {
+    border-color: rgba(0, 0, 0, 0.2);
+    background: #fff;
+  }
+
+  .table-wrap {
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .main-table th,
+  .main-table td {
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .main-table th {
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
